@@ -961,6 +961,18 @@ class TestMaskedArray:
         assert_(str(t_ne[0]) == "(--, (--, 1))")
         assert_(repr(t_ne[0]) == "(--, (--, 1))")
 
+    def test_print_precision(self):
+        oldopts = np.get_printoptions()
+        np.set_printoptions(precision=2, floatmode="fixed")
+        try:
+            mx = numpy.ma.array(
+                data=[1.12345,2.12345,3.12345,-1.12345,5.12345],
+                mask=[False, False, False, True, False], fill_value=np.nan)
+            assert_equal(str(mx), "[1.12 2.12 3.12 -- 5.12]")
+        finally:
+            np.set_printoptions(**oldopts)
+
+
     def test_object_with_array(self):
         mx1 = masked_array([1.], mask=[True])
         mx2 = masked_array([1., 2.])

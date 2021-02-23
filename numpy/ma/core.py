@@ -3934,7 +3934,17 @@ class MaskedArray(ndarray):
         return res
 
     def __str__(self):
-        return str(self._insert_masked_print())
+        is_float = np.all(np.vectorize(lambda x: isinstance(x, float))(self._data))
+        res = self._insert_masked_print()
+        if is_float:
+            precision = np.get_printoptions()['precision']
+            res_str = str(res)
+            res_str = res_str.replace("[", "").replace("]", "")
+            res_fix = [str(round(eval(s), precision)) if s != "--" else "--" for s in res_str.split()]
+            out = "[" + " ".join(res_fix) + "]"
+        else:
+            out = str(res)
+        return out
 
     def __repr__(self):
         """
